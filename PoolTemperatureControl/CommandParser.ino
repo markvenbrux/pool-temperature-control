@@ -25,9 +25,10 @@ void CommandParserTaskSetup() {
 
 ///////////////////////////////////////////////////////////////////////////////
 void CommandParserTask() {
-  if ( bluetoothSerial.available() > 0  ) {        
-    char c = bluetoothSerial.read();
-    bluetoothSerial.write(c);
+  if ( Serial.available() > 0  ) {        
+    char c = Serial.read();
+    Serial.write(c);
+    
     CommandParserParse(c);
   }  
 }
@@ -40,14 +41,15 @@ void CommandParserParse(char c) {
       rcvIndex--;      
     }
   } else {
+    Serial.println();
     rcvCommand[rcvIndex] = '\0'; // Terminate the received string
     bool parseResult = ParseSetCommand(rcvCommand);
     if (!parseResult) parseResult = ParseGetCommand(rcvCommand);
     if (!parseResult) parseResult = ParsePinSetCommand(rcvCommand);
     if (!parseResult) parseResult = ParseCommand(rcvCommand);
     if (!parseResult) {
-      bluetoothSerial.print("Failed to parse: ");
-      bluetoothSerial.println(rcvCommand);
+      Serial.print("Failed to parse: ");
+      Serial.println(rcvCommand);
     }
     rcvIndex=0;
     rcvCommand[0] = '\0';
@@ -107,7 +109,7 @@ bool ParseGetCommand(const char * command) {
   if(cmd && strcmp(cmd, T_GET)==0) {
     char * field = strtok(NULL, "'\0'" );
     if(field && strcmp(field, T_TPOOLMAXLIMIT)==0){
-      bluetoothSerial.print("tPoolMax = ");  bluetoothSerial.println(eeprom.settings.tPoolMaxLimit);
+      Serial.print("tPoolMax = ");  Serial.println(eeprom.settings.tPoolMaxLimit);
       result = true;
     }
     if(field && strcmp(field, T_ALL)==0){

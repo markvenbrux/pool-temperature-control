@@ -33,15 +33,10 @@ float ReadTemperature(const byte addr[8]) {
 }
 
 void PrintTemperatures(const char * label, temperatures_t t){
-  bluetoothSerial.println(label);
-  bluetoothSerial.print("  tAmbient      = "); bluetoothSerial.println(t.tAmbient);
-  bluetoothSerial.print("  tPool         = "); bluetoothSerial.println(t.tPool);
-  bluetoothSerial.print("  tCollector    = "); bluetoothSerial.println(t.tCollector);
-  bluetoothSerial.print("  tCollectorOut = "); bluetoothSerial.println(t.tCollectorOut);
   Serial.println(label);
   Serial.print("  tAmbient      = "); Serial.println(t.tAmbient);
   Serial.print("  tPool         = "); Serial.println(t.tPool);
   Serial.print("  tCollector    = "); Serial.println(t.tCollector);
   Serial.print("  tCollectorOut = "); Serial.println(t.tCollectorOut);
-}
+ }
 

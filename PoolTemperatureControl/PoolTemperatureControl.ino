@@ -1,15 +1,28 @@
 #include <OneWire.h>
 #include <SoftwareSerial.h>
 #include "MyTypes.h"
+// Use with a Arduino pro mini ATMega328 (3.3V, 8MHz) and HC-06 Bluetooth 
+// module for both program uploading and interaction.
+// Why 57600 baud?
+// Use with Bluetooth module on arduino physical serial port: configure the BT
+// module to operate at 57600 baud to match with the baudrate expected 
+// by the bootloader for the Arduino pro mini ATMega328 (3.3V, 8MHz).
+// To upload new software from the arduino IDE:
+// - press '->' (upload) button
+// - hold arduino reset button until 3 sec. after 
+//   message "Sketch uses ... Maximum is 2,048 bytes." message appeared.
+// TODO: find a way to trigger an automatic reset of the Arduino while 
+// uploading via Bluetooth.
+// http://letsmakerobots.com/content/programming-arduino-bluetooth
+// http://wiki.pinguino.cc/index.php/SPP_Bluetooth_Modules
+
 // OneWire DS18S20, DS18B20, DS1822 Temperature Example
 // http://www.pjrc.com/teensy/td_libs_OneWire.html
 // The DallasTemperature library can do all this work for you!
 // http://milesburton.com/Dallas_Temperature_Control_Library
 
 // Pin definitions
-//Relay pins
-#define P_BT_RX 4
-#define P_BT_TX 5
+// Relay pins
 #define P_PUMP 6
 #define P_LIGHT 7
 #define P_8 8
@@ -22,10 +35,6 @@
 #define RELAY_ON 0
 #define RELAY_OFF 1
 
-// Bluetooth serial
-// Find this library with reference at http://www.extrapixel.ch/processing/bluetoothDesktop/
-SoftwareSerial bluetoothSerial(P_BT_RX, P_BT_TX);
-
 eeprom_t eeprom;
 temperatures_t temperatures;
 
@@ -36,7 +45,7 @@ const byte TCollectorAddr[8] =    {0x28, 0x7A, 0x30, 0xF2, 0x5, 0x0, 0x0, 0x8E};
 const byte TAmbientAddr[8] =      {0x28, 0x56, 0xD3, 0xF3, 0x5, 0x0, 0x0, 0x5E};
 
 void setup(void) {
-  SerialTaskSetup();
+  Serial.begin(57600);
   CommandParserTaskSetup();
   EepromSetup();
   PumpControlTaskSetup();
@@ -51,7 +60,6 @@ void setup(void) {
 
 void loop(void) {
   if (eeprom.settings.runPumpControlTask) PumpControlTask();
-  SerialTask();
   CommandParserTask();
   // LightControlTask();
   WatchDogTask();

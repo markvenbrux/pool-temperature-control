@@ -5,18 +5,18 @@ void EepromSetup() {
   if (eeprom.writeCount == -1){
     ResetEeprom();
   }
-  bluetoothSerial.println(eeprom.writeCount);
-  bluetoothSerial.println(eeprom.settings.tPoolMaxLimit);
+  Serial.println(eeprom.writeCount);
+  Serial.print("tPoolMaxLimit: ");Serial.println(eeprom.settings.tPoolMaxLimit);
 }
 
 void ResetSettings() {
-  bluetoothSerial.println("Reset settings.");
+  Serial.println("Reset settings.");
   eeprom.settings.tPoolMaxLimit = 29;
   eeprom.settings.runPumpControlTask = true;
 }
 
 void ResetStatistics() {
-  bluetoothSerial.println("Reset statistics.");
+  Serial.println("Reset statistics.");
   SetTemperatures(&eeprom.minTemperatures, 1000);
   SetTemperatures(&eeprom.maxTemperatures, -1000);
 }
@@ -29,7 +29,7 @@ void SetTemperatures(temperatures_t * t, double value){
 }
 
 void ResetEeprom() {
-  bluetoothSerial.println("Reset eeprom.");
+  Serial.println("Reset eeprom.");
   ResetSettings();
   ResetStatistics();
 }
