@@ -31,25 +31,27 @@ void PumpControlTask(){
         pumpControlTaskNextTransitionTime = millis() + 1*second;
       break;
   
-      case 1: // Read temperature and control pump
-        temperatures.tAmbient = ReadTemperature(TAmbientAddr);
-        UpdateStatistics(temperatures.tAmbient, &eeprom.minTemperatures.tAmbient, &eeprom.maxTemperatures.tAmbient);
-        temperatures.tPool = ReadTemperature(TPoolAddr);
-        UpdateStatistics(temperatures.tPool, &eeprom.minTemperatures.tPool, &eeprom.maxTemperatures.tPool);
-        temperatures.tCollector = ReadTemperature(TCollectorAddr);
-        UpdateStatistics(temperatures.tCollector, &eeprom.minTemperatures.tCollector, &eeprom.maxTemperatures.tCollector);
-        temperatures.tCollectorOut = ReadTemperature(TCollectorOutAddr);
-        UpdateStatistics(temperatures.tCollectorOut, &eeprom.minTemperatures.tCollectorOut, &eeprom.maxTemperatures.tCollectorOut);
-               
+      case 1: // Read temperatures and control pump
         if (
-            ((temperatures.tCollector - temperatures.tPool) > 0.2 && temperatures.tPool < eeprom.settings.tPoolMaxLimit) ||
-            ((temperatures.tCollector - temperatures.tPool) < -0.2 && temperatures.tPool > eeprom.settings.tPoolMaxLimit) 
-         ) {
-          // Start pump
-          digitalWrite(P_PUMP, RELAY_ON);
-        } else {
-          // Stop pump
-          digitalWrite(P_PUMP, RELAY_OFF);
+          ReadTemperature(TAmbientAddr, &temperatures.tAmbient) &&
+          ReadTemperature(TPoolAddr, &temperatures.tPool) &&
+          ReadTemperature(TCollectorAddr, &temperatures.tCollector) &&
+          ReadTemperature(TCollectorOutAddr, &temperatures.tCollectorOut)
+        ) {
+          UpdateStatistics(temperatures.tAmbient, &eeprom.minTemperatures.tAmbient, &eeprom.maxTemperatures.tAmbient);
+          UpdateStatistics(temperatures.tPool, &eeprom.minTemperatures.tPool, &eeprom.maxTemperatures.tPool);
+          UpdateStatistics(temperatures.tCollector, &eeprom.minTemperatures.tCollector, &eeprom.maxTemperatures.tCollector);
+          UpdateStatistics(temperatures.tCollectorOut, &eeprom.minTemperatures.tCollectorOut, &eeprom.maxTemperatures.tCollectorOut);                 
+          if (
+              ((temperatures.tCollector - temperatures.tPool) > 0.2 && temperatures.tPool < eeprom.settings.tPoolMaxLimit) ||
+              ((temperatures.tCollector - temperatures.tPool) < -0.2 && temperatures.tPool > eeprom.settings.tPoolMaxLimit) 
+           ) {
+            // Start pump
+            digitalWrite(P_PUMP, RELAY_ON);
+          } else {
+            // Stop pump
+            digitalWrite(P_PUMP, RELAY_OFF);
+          }
         }
         pumpControlTaskState = 2;
       break;
