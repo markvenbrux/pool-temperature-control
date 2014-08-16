@@ -31,13 +31,14 @@ void PumpControlTask(){
         pumpControlTaskNextTransitionTime = millis() + 1*second;
       break;
   
-      case 1: // Read temperatures and control pump
-        if (
-          ReadTemperature(TAmbientAddr, &temperatures.tAmbient) &&
-          ReadTemperature(TPoolAddr, &temperatures.tPool) &&
-          ReadTemperature(TCollectorAddr, &temperatures.tCollector) &&
-          ReadTemperature(TCollectorOutAddr, &temperatures.tCollectorOut)
-        ) {
+      case 1: {// Read temperatures and control pump 
+        bool readResult = true;
+        readResult = ReadTemperature(TAmbientAddr, &temperatures.tAmbient) && readResult;
+        readResult = ReadTemperature(TPoolAddr, &temperatures.tPool) && readResult;
+        readResult = ReadTemperature(TCollectorAddr, &temperatures.tCollector) && readResult;
+        readResult = ReadTemperature(TCollectorOutAddr, &temperatures.tCollectorOut) && readResult;
+
+        if (readResult) {
           UpdateStatistics(temperatures.tAmbient, &eeprom.minTemperatures.tAmbient, &eeprom.maxTemperatures.tAmbient);
           UpdateStatistics(temperatures.tPool, &eeprom.minTemperatures.tPool, &eeprom.maxTemperatures.tPool);
           UpdateStatistics(temperatures.tCollector, &eeprom.minTemperatures.tCollector, &eeprom.maxTemperatures.tCollector);
@@ -54,6 +55,7 @@ void PumpControlTask(){
           }
         }
         pumpControlTaskState = 2;
+      }
       break;
       
       case 2: // Sleep

@@ -1,4 +1,5 @@
 
+int crcErrorCount = 0;
 
 void StartTemperatureConversion(const byte addr[8]) {
   ds.reset();
@@ -19,7 +20,8 @@ bool ReadTemperature(const byte addr[8], double *pTemperature) {
     data[i] = ds.read();
   }
   if ( OneWire::crc8( data, 8) != data[8]) {
-    Serial.println("ReadTemperature: CRC is not valid!\n");
+    crcErrorCount++;
+    Serial.print("ReadTemperature: CrcErrorCount: "); Serial.println(crcErrorCount);
     result = false;
   } else {
     // Convert the data to actual temperature
