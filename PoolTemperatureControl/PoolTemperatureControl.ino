@@ -20,11 +20,18 @@
 // http://www.pjrc.com/teensy/td_libs_OneWire.html
 // The DallasTemperature library can do all this work for you!
 // http://milesburton.com/Dallas_Temperature_Control_Library
+// Temperature sensor DS18B20 waterproof stainless steel
+// tube (6*50mm) encapsulation.
+// Power supply range: 3.0V to 5.5V 
+// Operating temperature range: -55°C to +125°C 
+// Accuracy over the range of -10°C to +85°C: ±0.5°C. 
+// Output lead: red (VCC), yellow(DATA) , black(GND) 
+// Wire at pool: blue(VCC), white(DATA) , purple(GND) 
 
 // Pin definitions
 // Relay pins
-#define P_PUMP 6
-#define P_LIGHT 7
+#define P_PUMP 4
+#define P_LIGHT 5
 #define P_8 8
 #define P_9 9
 // Temperature sensors
