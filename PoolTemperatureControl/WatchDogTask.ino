@@ -15,7 +15,7 @@ void WatchDogTask() {
 }
 
 void resetArduino() {
-  wdt_enable(WDTO_15MS);
+  wdt_enable(WDTO_8S);
   noInterrupts();
   while(1); // wait to die and be reborn....
 }
