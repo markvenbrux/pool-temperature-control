@@ -1,3 +1,5 @@
+
+#include <avr/wdt.h>
 #include <OneWire.h>
 #include <SoftwareSerial.h>
 #include "MyTypes.h"
@@ -52,6 +54,9 @@ const byte TCollectorAddr[8] =    {0x28, 0x7A, 0x30, 0xF2, 0x5, 0x0, 0x0, 0x8E};
 const byte TAmbientAddr[8] =      {0x28, 0x56, 0xD3, 0xF3, 0x5, 0x0, 0x0, 0x5E};
 
 void setup(void) {
+  // We always need to make sure the WDT is disabled immediately after a 
+  // reset, otherwise it will continue to operate with default values.
+  wdt_disable();  
   Serial.begin(57600);
   CommandParserTaskSetup();
   EepromSetup();
@@ -69,7 +74,7 @@ void loop(void) {
   if (eeprom.settings.runPumpControlTask) PumpControlTask();
   CommandParserTask();
   // LightControlTask();
-  WatchDogTask();
+  // WatchDogTask();
 }
 
 

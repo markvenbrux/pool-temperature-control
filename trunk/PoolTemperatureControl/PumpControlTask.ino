@@ -45,7 +45,9 @@ void PumpControlTask(){
           UpdateStatistics(temperatures.tCollectorOut, &eeprom.minTemperatures.tCollectorOut, &eeprom.maxTemperatures.tCollectorOut);                 
           if (
               ((temperatures.tCollector - temperatures.tPool) > 0.2 && temperatures.tPool < eeprom.settings.tPoolMaxLimit) ||
-              ((temperatures.tCollector - temperatures.tPool) < -0.2 && temperatures.tPool > eeprom.settings.tPoolMaxLimit) 
+              ((temperatures.tCollector - temperatures.tPool) < -0.2 && temperatures.tPool > eeprom.settings.tPoolMaxLimit) ||
+              ((temperatures.tCollectorOut - temperatures.tPool) > 0.2 && temperatures.tPool < eeprom.settings.tPoolMaxLimit) ||
+              ((temperatures.tCollectorOut - temperatures.tPool) < -0.2 && temperatures.tPool > eeprom.settings.tPoolMaxLimit) 
            ) {
             // Start pump
             digitalWrite(P_PUMP, RELAY_ON);
@@ -60,7 +62,7 @@ void PumpControlTask(){
       
       case 2: // Sleep
       default:
-        pumpControlTaskNextTransitionTime = millis() + 5*second;//+ 5*minute;
+        pumpControlTaskNextTransitionTime = millis() + 5*minute;
         pumpControlTaskState = 0;    
       break;
       
