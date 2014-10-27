@@ -40,6 +40,8 @@
 #define P_ONEWIRE 10
 // Motion sensor
 #define P_MOTION 11
+// Status led
+#define P_STATUS_LED 13
 
 #define RELAY_ON 0
 #define RELAY_OFF 1
@@ -53,17 +55,24 @@ const byte TCollectorOutAddr[8] = {0x28, 0xE0, 0xD8, 0xF1, 0x5, 0x0, 0x0, 0x9C};
 const byte TCollectorAddr[8] =    {0x28, 0x7A, 0x30, 0xF2, 0x5, 0x0, 0x0, 0x8E};
 const byte TAmbientAddr[8] =      {0x28, 0x56, 0xD3, 0xF3, 0x5, 0x0, 0x0, 0x5E};
 
+timeslicedTask_t blinkTask = {"Blink", BlinkTaskSetup, BlinkTask};
+timeslicedTask_t watchDogTask = {"WatchDog", WatchDogTaskSetup, WatchDogTask};
+timeslicedTask_t pumpControlTask = {"PumpControl", PumpControlTaskSetup, PumpControlTask};
+timeslicedTask_t commandParserTask = {"PumpControl", CommandParserTaskSetup, CommandParserTask};
+timeslicedTask_t monitorTemperaturesTask = {"MonitorTemperatures", MonitorTemperaturesTaskSetup, MonitorTemperaturesTask};
+
+timeslicedTask_t tasks[] = {blinkTask, watchDogTask, pumpControlTask, commandParserTask, monitorTemperaturesTask};
+const int numberOfTasks = (sizeof(tasks)/sizeof(timeslicedTask_t));
+
 void setup(void) {
   // We always need to make sure the WDT is disabled immediately after a 
   // reset, otherwise it will continue to operate with default values.
   wdt_disable();  
   Serial.begin(57600);
-  CommandParserTaskSetup();
-  EepromSetup();
-  PumpControlTaskSetup();
-  // LightControlTaskSetup();
-  WatchDogTaskSetup();
-  // initialize the relay pins as an output.
+  EepromSetup();  
+  for (int i = 0; i < numberOfTasks; i++) {
+    tasks[i].Setup(&tasks[i]);
+  }
   digitalWrite(P_8, RELAY_OFF);
   digitalWrite(P_9, RELAY_OFF);
   pinMode(P_8, OUTPUT);
@@ -71,10 +80,9 @@ void setup(void) {
 }
 
 void loop(void) {
-  if (eeprom.settings.runPumpControlTask) PumpControlTask();
-  CommandParserTask();
-  // LightControlTask();
-  // WatchDogTask();
+  for (int i = 0; i < numberOfTasks; i++) {
+    tasks[i].Task(&tasks[i]);
+  }
 }
 
 

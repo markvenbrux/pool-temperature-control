@@ -40,11 +40,3 @@ bool ReadTemperature(const byte addr[8], double *pTemperature) {
   return result;
 }
 
-void PrintTemperatures(const char * label, temperatures_t t){
-  Serial.println(label);
-  Serial.print("  tAmbient      = "); Serial.println(t.tAmbient);
-  Serial.print("  tPool         = "); Serial.println(t.tPool);
-  Serial.print("  tCollector    = "); Serial.println(t.tCollector);
-  Serial.print("  tCollectorOut = "); Serial.println(t.tCollectorOut);
- }
-

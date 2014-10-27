@@ -5,20 +5,24 @@ void EepromSetup() {
   if (eeprom.writeCount == -1){
     ResetEeprom();
   }
-  Serial.println(eeprom.writeCount);
+  Serial.print("writeCount: ");Serial.println(eeprom.writeCount);
   Serial.print("tPoolMaxLimit: ");Serial.println(eeprom.settings.tPoolMaxLimit);
+  Serial.print("tPoolMinLimit: ");Serial.println(eeprom.settings.tPoolMinLimit);
 }
 
 void ResetSettings() {
   Serial.println("Reset settings.");
   eeprom.settings.tPoolMaxLimit = 29;
+  eeprom.settings.tPoolMinLimit = 1;
   eeprom.settings.runPumpControlTask = true;
+  SaveEeprom();
 }
 
 void ResetStatistics() {
   Serial.println("Reset statistics.");
   SetTemperatures(&eeprom.minTemperatures, 1000);
   SetTemperatures(&eeprom.maxTemperatures, -1000);
+  eeprom.pumpSwitchCount = 0;
 }
 
 void SetTemperatures(temperatures_t * t, double value){
