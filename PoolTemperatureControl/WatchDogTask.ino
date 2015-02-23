@@ -1,7 +1,7 @@
 #include <avr/wdt.h>
 #include <avr/sleep.h>
 #include <avr/power.h>
-#include <avr/stdbool.h>
+#include <stdbool.h>
 
 void WatchDogTaskSetup(timeslicedTask_t *t) {
   t->nextTransitionTime = millis() + day;
